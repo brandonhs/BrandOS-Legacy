@@ -10,13 +10,30 @@ void write_character_to_memory(unsigned int offset, char character, char attribu
 int get_offset(int col, int row);
 int get_offset_row(int offset);
 int get_offset_col(int offset);
-int move_offset_to_newline(int offset);
+int move_offset_row(int offset, int row_off);
+//void vga_mem_copy(int source_row, int dest_row);
 
+
+char *itoa(int val, int base) {
+    static char buf[32] = {0};
+
+    int i = 30;
+
+    for (; val && i; --i, val /= base)
+
+        buf[i] = "0123456789abcdef"[val % base];
+
+    return &buf[i + 1];
+}
 
 void print_char(char character, char attributes) {
     int offset = get_cursor_offset();
+    if (get_offset_row(offset) > MAX_ROWS-1) {
+        offset = move_offset_row(offset, -1);
+        scroll_ln(1);
+    }
     if (character == '\n') {
-        offset = move_offset_to_newline(offset);
+        offset = move_offset_row(offset, 1);
     } else {
         write_character_to_memory(offset, character, attributes);
         offset += 1;
@@ -28,6 +45,10 @@ void print_string(char* message, char attributes) {
     for (int i = 0; message[i] != 0; i++) {
         print_char(message[i], attributes);
     }
+}
+
+void print_nl() {
+    print_char('\n', 0x00);
 }
 
 
@@ -66,8 +87,28 @@ int get_offset_col(int offset) {
     return offset - get_offset_row(offset)*MAX_COLS;
 }
 
-int move_offset_to_newline(int offset) {
+int move_offset_row(int offset, int row_off) {
     int row = get_offset_row(offset);
-    offset = get_offset(0, row+1); // move col = 0, row += 1
+    offset = get_offset(0, row+row_off); // move col = 0, row += 1
     return offset;
+}
+
+void vga_mem_copy(int source_row, int dest_row) {
+    if (source_row == dest_row) return; // dont waste time if source == dest
+
+    unsigned short num_bytes = MAX_COLS*2;
+
+    char *source_mem = (char*)(VGA_TEXT_MEMORY + get_offset(0, source_row)*2);
+    char *dest_mem = (char*)(VGA_TEXT_MEMORY + get_offset(0, dest_row)*2);
+
+    for (int i = 0; i < num_bytes; i++) {
+        *(dest_mem+i) = *(source_mem+i);
+    }
+}
+
+void scroll_ln(int offset) {
+    // TODO: add variable offset and scroll buffer
+    for (int i = 0; i < MAX_ROWS; i++) {
+        vga_mem_copy(i, i-1);
+    }
 }

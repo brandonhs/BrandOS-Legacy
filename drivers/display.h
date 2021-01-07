@@ -7,6 +7,11 @@
 
 #define WHITE_ON_BLACK 0x0f
 
+char *itoa(int val, int base);
 
 void print_char(char character, char attributes);
 void print_string(char* message, char attributes);
+void print_nl();
+
+void vga_mem_copy(int source_row, int dest_row);
+void scroll_ln(int offset);
