@@ -4,7 +4,6 @@
 // private display functions
 int get_cursor_offset();
 void set_cursor_offset(int offset);
-void write_character_to_memory(unsigned int offset, char character, char attributes);
 
 // private util functions
 int get_offset(int col, int row);
@@ -28,15 +27,15 @@ char *itoa(int val, int base) {
 
 void print_char(char character, char attributes) {
     int offset = get_cursor_offset();
-    if (get_offset_row(offset) > MAX_ROWS-1) {
-        offset = move_offset_row(offset, -1);
-        scroll_ln(1);
-    }
     if (character == '\n') {
         offset = move_offset_row(offset, 1);
     } else {
         write_character_to_memory(offset, character, attributes);
         offset += 1;
+    }
+    if (get_offset_row(offset) > MAX_ROWS-1) {
+        offset = move_offset_row(offset, -1);
+        scroll_ln(1);
     }
     set_cursor_offset(offset);
 }
@@ -108,7 +107,7 @@ void vga_mem_copy(int source_row, int dest_row) {
 
 void scroll_ln(int offset) {
     // TODO: add variable offset and scroll buffer
-    for (int i = 0; i < MAX_ROWS; i++) {
+    for (int i = 1; i <= MAX_ROWS; i++) {
         vga_mem_copy(i, i-1);
     }
 }
