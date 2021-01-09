@@ -12,16 +12,16 @@ int get_offset_col(int offset);
 int move_offset_row(int offset, int row_off);
 //void vga_mem_copy(int source_row, int dest_row);
 
+void kprint(char* message) {
+    print_string(message, WHITE_ON_BLACK);
+}
 
 char *itoa(int val, int base) {
     static char buf[32] = {0};
-
     int i = 30;
-
-    for (; val && i; --i, val /= base)
-
+    for (; val && i; --i, val /= base) {
         buf[i] = "0123456789abcdef"[val % base];
-
+    }
     return &buf[i + 1];
 }
 
@@ -110,4 +110,10 @@ void scroll_ln(int offset) {
     for (int i = 1; i <= MAX_ROWS; i++) {
         vga_mem_copy(i, i-1);
     }
+}
+
+void backspace() {
+    int off = get_cursor_offset();
+    if (off <= 0) return;
+    set_cursor_offset(--off);
 }
