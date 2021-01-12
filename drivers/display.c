@@ -29,6 +29,11 @@ void print_char(char character, char attributes) {
     int offset = get_cursor_offset();
     if (character == '\n') {
         offset = move_offset_row(offset, 1);
+    } else if (character == '\b') {
+        if (offset <= 0) offset = MAX_COLS-1;
+        else offset--;
+        set_cursor_offset(offset);
+        write_character_to_memory(offset, 0x20, 0x07); // default no character
     } else {
         write_character_to_memory(offset, character, attributes);
         offset += 1;
@@ -110,10 +115,4 @@ void scroll_ln(int offset) {
     for (int i = 1; i <= MAX_ROWS; i++) {
         vga_mem_copy(i, i-1);
     }
-}
-
-void backspace() {
-    int off = get_cursor_offset();
-    if (off <= 0) return;
-    set_cursor_offset(--off);
 }

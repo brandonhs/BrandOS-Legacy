@@ -22,9 +22,9 @@ void kmain() {
 
 
 void key_callback(u8 scancode) {
-    char sc2ascii[] = {SCANCODE2ASCII_TABLE};
-    char ascii = sc2ascii[scancode];
-    if (ascii == 0) return;
+    u8 event;
+    char ascii = sc_to_ascii(scancode, &event);
+    if (event != KEY_DOWN) return;
 
     print_char(ascii, 0x04);
 }

@@ -19,7 +19,6 @@ void print_char(char character, char attributes); // print character at current 
 void print_string(char* message, char attributes); // print string at current cursor offset
 void kprint(char* message); // print string
 void print_nl(); // print newline
-void backspace();
 
 void vga_mem_copy(int source_row, int dest_row); // copy vga memory from source row to destination row
 void scroll_ln(int offset); // scroll line
