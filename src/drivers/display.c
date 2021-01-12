@@ -12,8 +12,25 @@ int get_offset_col(int offset);
 int move_offset_row(int offset, int row_off);
 //void vga_mem_copy(int source_row, int dest_row);
 
+void set_cursor_pos(int x, int y) {
+    int offset = get_offset(x, y);
+    set_cursor_offset(offset);
+}
+
 void kprint(char* message) {
     print_string(message, WHITE_ON_BLACK);
+}
+
+void kprint_at(int x, int y, char* message) {
+    int offset = get_offset(x, y);
+    set_cursor_offset(offset);
+    kprint(message);
+}
+
+void kprint_char_at(int x, int y, char c, char attributes) {
+    int offset = get_offset(x, y);
+    set_cursor_offset(offset);
+    write_character_to_memory(offset, c, attributes);
 }
 
 char *itoa(int val, int base) {
@@ -115,4 +132,10 @@ void scroll_ln(int offset) {
     for (int i = 1; i <= MAX_ROWS; i++) {
         vga_mem_copy(i, i-1);
     }
+}
+
+void get_cursor_pos(int *x, int *y) {
+    int off = get_cursor_offset();
+    *x = get_offset_col(off);
+    *y = get_offset_row(off);
 }
