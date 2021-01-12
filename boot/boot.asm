@@ -60,7 +60,7 @@ DATA_SEG equ gdt_data - gdt_start
 data:
     DISK db 0
     KERNEL_OFFSET equ 0x1000
-    NUM_SECTORS equ 16
+    NUM_SECTORS equ 31
 
 disk_load:
     pusha

@@ -4,5 +4,5 @@
 ; kernel entry
 kernel_entry:
     call kmain ; call kernel main function
-
-jmp $
+    
+    jmp $
